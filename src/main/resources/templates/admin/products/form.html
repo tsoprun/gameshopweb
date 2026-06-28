@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Product')}"><title>Product Form — Admin</title></head>
+<script>
+    function autoSlug() {
+        const slugField = document.getElementById('productSlug');
+        if (slugField.dataset.manual === 'true') return;
+        const name = document.getElementById('productName').value;
+        slugField.value = name.toLowerCase()
+            .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+            .replace(/[^a-z0-9\s-]/g, '')
+            .trim().replace(/\s+/g, '-');
+    }
+    document.getElementById('productSlug').addEventListener('input', function() {
+        this.dataset.manual = 'true';
+    });
+
+    function addScreenshot() {
+        const div = document.createElement('div');
+        div.className = 'input-group mb-2';
+        div.innerHTML = `
+        <input type="url" class="form-control" name="imageUrls" placeholder="https://..."/>
+        <button type="button" class="btn btn-outline-danger"
+                onclick="this.parentElement.remove()">
+            <i class="bi bi-trash"></i>
+        </button>`;
+        document.getElementById('screenshotList').appendChild(div);
+    }
+</script>
+<body>
+<div class="d-flex" style="min-height:100vh;">
+    <div th:replace="~{fragments/layout :: admin-sidebar}"></div>
+
+    <main class="flex-grow-1 p-4">
+        <div class="d-flex align-items-center gap-3 mb-4">
+            <a th:href="@{/admin/products}" class="btn btn-outline-secondary btn-sm">
+                <i class="bi bi-arrow-left"></i>
+            </a>
+            <h2 class="fw-bold mb-0"
+                th:text="${product.id != null} ? 'Edit product' : 'New product'"></h2>
+        </div>
+
+        <div class="card border-0 shadow-sm" style="max-width:720px;">
+            <div class="card-body p-4">
+                <form th:action="@{/admin/products/save}" method="post">
+                    <input type="hidden" th:field="*{id}" th:object="${product}"/>
+
+                    <div class="row g-3">
+                        <div class="col-md-8">
+                            <label class="form-label fw-medium">Name</label>
+                            <input type="text" class="form-control" id="productName" oninput="autoSlug()"
+                                   th:field="*{name}" th:object="${product}" required/>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-medium">Price ($)</label>
+                            <input type="number" class="form-control" step="0.01" min="0"
+                                   th:field="*{price}" th:object="${product}" required/>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-medium">Slug</label>
+                            <input type="text" class="form-control" id="productSlug"
+                                   th:field="*{slug}" th:object="${product}" required/>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-medium">Metacritic</label>
+                            <input type="number" class="form-control" step="0.1"
+                                   th:field="*{metacriticScore}" th:object="${product}"/>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-medium">Genre</label>
+                            <input type="text" class="form-control"
+                                   th:field="*{genre}" th:object="${product}"/>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-medium">Platform</label>
+                            <input type="text" class="form-control"
+                                   th:field="*{platform}" th:object="${product}"/>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-medium">Cover image URL</label>
+                            <input type="url" class="form-control"
+                                   th:field="*{imageUrl}" th:object="${product}"/>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-medium">Screenshot URLs</label>
+                            <div id="screenshotList">
+                                <div th:each="img, i : ${product.images}" class="input-group mb-2">
+                                    <input type="url" class="form-control" name="imageUrls"
+                                           th:value="${img.imageUrl}" placeholder="https://..."/>
+                                    <button type="button" class="btn btn-outline-danger"
+                                            onclick="this.parentElement.remove()">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                                <!-- at least one empty row for new products -->
+                                <div th:if="${product.images == null or product.images.isEmpty()}"
+                                     class="input-group mb-2">
+                                    <input type="url" class="form-control" name="imageUrls" placeholder="https://..."/>
+                                    <button type="button" class="btn btn-outline-danger"
+                                            onclick="this.parentElement.remove()">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-outline-secondary btn-sm mt-1"
+                                    onclick="addScreenshot()">
+                                <i class="bi bi-plus-lg me-1"></i>Add screenshot
+                            </button>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-medium">Trailer URL</label>
+                            <input type="url" class="form-control"
+                                   th:field="*{trailerUrl}" th:object="${product}"/>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-medium">Categories</label>
+                            <div class="d-flex flex-wrap gap-2">
+                                <div th:each="cat : ${categories}" class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox"
+                                           name="categoryIds"
+                                           th:value="${cat.id}"
+                                           th:id="'cat-' + ${cat.id}"
+                                           th:checked="${product.categories != null and #lists.contains(product.categories.![id], cat.id)}"/>
+                                    <label class="form-check-label" th:for="'cat-' + ${cat.id}" th:text="${cat.name}"></label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-medium">Description</label>
+                            <textarea class="form-control" rows="4"
+                                      th:field="*{description}" th:object="${product}"></textarea>
+                        </div>
+                    <div class="d-flex gap-2 mt-4">
+                        <button class="btn btn-primary" type="submit">
+                            <i class="bi bi-check-lg me-1"></i>Save
+                        </button>
+                        <a th:href="@{/admin/products}" class="btn btn-outline-secondary">
+                            Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+</div>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

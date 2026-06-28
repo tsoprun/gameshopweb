@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Register')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar(0)}"></nav>
+
+<div class="d-flex justify-content-center align-items-center" style="min-height:80vh;">
+    <div class="card p-5" style="width:100%;max-width:420px;">
+        <h3 class="fw-bold mb-1 text-center">Create account</h3>
+        <p class="text-secondary text-center mb-4 small">Join GameShop today</p>
+
+        <div th:if="${error}" class="alert alert-danger py-2" th:text="${error}"></div>
+
+        <form th:action="@{/auth/register}" method="post">
+            <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+            <div class="mb-3">
+                <label class="form-label text-secondary small">Username</label>
+                <input type="text" name="username" class="form-control" required autofocus/>
+            </div>
+            <div class="mb-3">
+                <label class="form-label text-secondary small">Email</label>
+                <input type="email" name="email" class="form-control" required/>
+            </div>
+            <div class="mb-4">
+                <label class="form-label text-secondary small">Password</label>
+                <input type="password" name="password" class="form-control"
+                       minlength="6" required/>
+            </div>
+            <button type="submit" class="btn btn-primary w-100 py-2">Create account</button>
+        </form>
+
+        <p class="text-center text-secondary small mt-4 mb-0">
+            Already have an account?
+            <a href="/auth/login" style="color:var(--gold);">Sign in</a>
+        </p>
+    </div>
+</div>
+
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

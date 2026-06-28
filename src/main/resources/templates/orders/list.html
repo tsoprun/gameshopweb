@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('My Orders')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar(0)}"></nav>
+
+<div class="container py-5">
+  <h2 class="section-title mb-4">My orders</h2>
+
+  <div th:if="${orders.isEmpty()}" class="text-center py-5 text-secondary">
+    <i class="bi bi-bag-x fs-1 d-block mb-3"></i>
+    <p>You haven't placed any orders yet.</p>
+    <a href="/shop" class="btn btn-primary">Start shopping</a>
+  </div>
+
+  <div class="card" th:unless="${orders.isEmpty()}">
+    <div class="table-responsive">
+      <table class="table mb-0 align-middle">
+        <thead style="border-bottom:1px solid #2a2a4a;">
+        <tr>
+          <th>#</th>
+          <th>Date</th>
+          <th>Items</th>
+          <th>Payment</th>
+          <th class="text-end">Total</th>
+          <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="order : ${orders}">
+          <td th:text="${order.id}"></td>
+          <td th:text="${#temporals.format(order.createdAt, 'dd.MM.yyyy HH:mm')}"></td>
+          <td th:text="${order.items.size()} + ' item(s)'"></td>
+          <td>
+                            <span class="badge"
+                                  style="background:rgba(200,164,74,0.12);color:var(--gold);"
+                                  th:text="${order.paymentMethod}"></span>
+          </td>
+          <td class="text-end price-tag"
+              th:text="'$' + ${#numbers.formatDecimal(order.totalAmount,1,2)}"></td>
+          <td>
+            <a th:href="@{/orders/{id}(id=${order.id})}"
+               class="btn btn-sm btn-outline-secondary">Details</a>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>
+

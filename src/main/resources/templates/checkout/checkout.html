@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Checkout')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar(0)}"></nav>
+
+<div class="container py-5" style="max-width:720px;">
+    <h2 class="section-title mb-4">Checkout</h2>
+
+    <div th:if="${param.paypalError}" class="alert alert-danger">
+        PayPal payment failed. Please try again.
+    </div>
+    <div th:if="${param.paypalCancelled}" class="alert alert-warning">
+        PayPal payment cancelled.
+    </div>
+
+    <!-- Order summary -->
+    <div class="card mb-4 p-3">
+        <h5 class="mb-3 text-secondary">Order summary</h5>
+        <div th:each="item : ${cartItems}"
+             class="d-flex justify-content-between py-2"
+             style="border-bottom:1px solid #2a2a4a;">
+            <span th:text="${item.productName} + ' x' + ${item.quantity}"></span>
+            <span class="price-tag"
+                  th:text="'$' + ${#numbers.formatDecimal(item.subtotal,1,2)}"></span>
+        </div>
+        <div class="d-flex justify-content-between pt-3 fw-bold fs-5">
+            <span>Total</span>
+            <span class="price-tag"
+                  th:text="'$' + ${#numbers.formatDecimal(total,1,2)}"></span>
+        </div>
+    </div>
+
+    <!-- Payment methods -->
+    <h5 class="text-secondary mb-3">Payment method</h5>
+
+    <div class="row g-3">
+        <div class="col-md-6">
+            <div class="card p-4 h-100">
+                <i class="bi bi-cash-coin fs-2 mb-3" style="color:var(--gold);"></i>
+                <h5 class="fw-bold mb-1">Cash on delivery</h5>
+                <p class="text-secondary small mb-3">Pay when your order arrives.</p>
+                <form action="/checkout/cash" method="post" class="mt-auto">
+                    <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+                    <button class="btn btn-outline-primary w-100">
+                        Choose cash on delivery
+                    </button>
+                </form>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card p-4 h-100">
+                <i class="bi bi-paypal fs-2 mb-3" style="color:#009cde;"></i>
+                <h5 class="fw-bold mb-1">PayPal</h5>
+                <p class="text-secondary small mb-3">Secure payment via PayPal sandbox.</p>
+                <form action="/checkout/paypal" method="post" class="mt-auto">
+                    <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+                    <button class="btn w-100" style="background:#009cde; color:#fff;">
+                        Pay with PayPal
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

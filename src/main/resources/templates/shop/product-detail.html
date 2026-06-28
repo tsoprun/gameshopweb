@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${product.name})}"></head>
+<body>
+
+<nav th:replace="~{fragments/layout :: navbar(${cartCount})}"></nav>
+
+<div class="container py-5">
+    <a href="/shop" class="btn btn-sm btn-outline-secondary mb-4">
+        <i class="bi bi-arrow-left me-1"></i>Back to catalog
+    </a>
+
+    <div class="row g-5">
+        <div class="col-lg-5">
+            <img th:src="${product.imageUrl}" th:alt="${product.name}"
+                 class="img-fluid rounded-3 w-100 mb-3"
+                 style="height:320px; object-fit:cover;"/>
+
+            <div th:if="${product.trailerUrl}" class="ratio ratio-16x9 mb-3">
+                <video th:src="${product.trailerUrl}" controls class="rounded-3"
+                       th:if="${#strings.contains(product.trailerUrl, '.mp4')}"></video>
+                <iframe th:unless="${#strings.contains(product.trailerUrl, '.mp4')}"
+                        th:src="${product.trailerUrl}" class="rounded-3" allowfullscreen></iframe>
+            </div>
+
+            <div th:if="${!screenshots.isEmpty()}" class="row g-2">
+                <div class="col-4" th:each="shot : ${screenshots}">
+                    <img th:src="${shot.imageUrl}" class="img-fluid rounded-2 w-100"
+                         style="height:75px; object-fit:cover; cursor:pointer;"
+                         data-bs-toggle="modal" data-bs-target="#shotModal"
+                         th:attr="onclick='openShot(\'' + ${shot.imageUrl} + '\')'"
+                         alt="screenshot"/>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-7">
+            <div class="d-flex gap-2 mb-3 flex-wrap">
+                <span th:if="${product.genre}" class="badge"
+                      style="background:rgba(200,164,74,0.12);color:var(--gold);" th:text="${product.genre}"></span>
+                <span th:if="${product.platform}" class="badge"
+                      style="background:#2a2a4a;color:#aaa;" th:text="${product.platform}"></span>
+                <span th:if="${product.metacriticScore != null}"
+                      class="badge" style="background:#1d9e75;"
+                      th:text="'MC: ' + ${product.metacriticScore}"></span>
+            </div>
+
+            <h1 class="fw-bold mb-3" th:text="${product.name}"></h1>
+            <p class="text-secondary lh-lg" th:text="${product.description}"></p>
+
+            <div class="card p-4 mt-4">
+                <span class="price-tag fs-2 mb-3 d-block"
+                      th:text="'$' + ${#numbers.formatDecimal(product.price, 1, 2)}"></span>
+                <form th:action="@{/cart/add/{id}(id=${product.id})}" method="post"
+                      class="d-flex gap-3 align-items-center">
+                    <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+                    <div class="input-group" style="max-width:120px;">
+                        <span class="input-group-text"
+                              style="background:var(--surface);border-color:var(--border2);color:var(--text-dim);">Qty</span>
+                        <input type="number" name="quantity" value="1" min="1" max="99"
+                               class="form-control text-center"/>
+                    </div>
+                    <button type="submit" class="btn btn-primary flex-grow-1">
+                        <i class="bi bi-cart-plus me-2"></i>Add to cart
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="shotModal" tabindex="-1">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content" style="background:var(--surface);border-color:var(--border);">
+            <div class="modal-body p-1">
+                <img id="shotImg" src="" class="img-fluid rounded-3 w-100" alt="screenshot"/>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/layout :: scripts}"></div>
+<script>
+    function openShot(src) { document.getElementById('shotImg').src = src; }
+</script>
+</body>
+</html>

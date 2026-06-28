@@ -1,0 +1,340 @@
+/* ═══════════════════════════════════════════════════
+   GameShop — Dark Fantasy Design System
+   ═══════════════════════════════════════════════════ */
+
+:root {
+  --bg:         #07080f;
+  --surface:    #0e1020;
+  --surface2:   #131628;
+  --border:     #2a2d4a;
+  --border2:    #3d4070;
+  --gold:       #c8a44a;
+  --gold-light: #e8c87a;
+  --gold-dim:   #7a5f28;
+  --text:       #ccc8b8;
+  --text-dim:   #7a7868;
+  --accent:     #6b50e8;
+  --danger:     #c04040;
+  --font-display: 'Rajdhani', serif;
+  --font-head:     'Rajdhani', sans-serif;
+  --font-body:    'Cormorant Garamond', serif;
+}
+
+/* ── Base ──────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  font-family: var(--font-body);
+  font-size: 17px;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6 {
+  font-family: var(--font-head);
+  color: var(--gold-light);
+  font-weight: 600;
+}
+
+/* ── Navbar ────────────────────────────────────────── */
+.navbar {
+  background: rgba(7,8,15,0.95) !important;
+  border-bottom: 1px solid var(--border) !important;
+  backdrop-filter: blur(12px);
+  position: relative;
+}
+.navbar::after {
+  content: '';
+  position: absolute;
+  bottom: -1px; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(to right, transparent 0%, var(--gold-dim) 30%, var(--gold-dim) 70%, transparent 100%);
+  pointer-events: none;
+}
+.navbar-brand {
+  font-family: var(--font-display) !important;
+  font-size: 1.15rem !important;
+  color: var(--gold-light) !important;
+  letter-spacing: 0.04em;
+}
+.nav-link {
+  font-family: var(--font-head);
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-dim) !important;
+  transition: color 0.2s;
+}
+.nav-link:hover { color: var(--gold) !important; }
+.navbar-toggler { border-color: var(--border2); }
+
+/* ── Dropdown ──────────────────────────────────────── */
+.dropdown-menu {
+  background: #0e1020;
+  border: 1px solid var(--border2);
+  border-radius: 0;
+}
+.dropdown-item {
+  font-family: var(--font-head);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-dim) !important;
+  transition: all 0.15s;
+}
+.dropdown-item:hover {
+  background: rgba(200,164,74,0.08);
+  color: var(--gold) !important;
+}
+.dropdown-item.text-danger { color: #e06060 !important; }
+.dropdown-divider { border-color: var(--border); }
+
+/* ── Buttons ───────────────────────────────────────── */
+.btn {
+  font-family: var(--font-head);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border-radius: 0;
+  transition: all 0.2s;
+}
+.btn-primary, .btn-primary:visited {
+  background: var(--gold) !important;
+  border-color: var(--gold) !important;
+  color: var(--bg) !important;
+}
+.btn-primary:hover {
+  background: var(--gold-light) !important;
+  border-color: var(--gold-light) !important;
+  color: var(--bg) !important;
+}
+.btn-outline-primary {
+  background: transparent !important;
+  border-color: var(--gold) !important;
+  color: var(--gold) !important;
+}
+.btn-outline-primary:hover {
+  background: var(--gold) !important;
+  color: var(--bg) !important;
+}
+.btn-outline-secondary {
+  background: transparent !important;
+  border-color: var(--border2) !important;
+  color: var(--text-dim) !important;
+}
+.btn-outline-secondary:hover {
+  border-color: var(--gold) !important;
+  color: var(--gold) !important;
+  background: rgba(200,164,74,0.06) !important;
+}
+.btn-outline-light {
+  border-color: var(--border2) !important;
+  color: var(--text-dim) !important;
+  background: transparent !important;
+}
+.btn-outline-light:hover {
+  background: rgba(200,164,74,0.08) !important;
+  color: var(--gold) !important;
+  border-color: var(--gold-dim) !important;
+}
+.btn-dark {
+  background: rgba(200,164,74,0.12) !important;
+  border-color: var(--gold) !important;
+  color: var(--gold) !important;
+}
+.btn-outline-danger {
+  border-color: var(--danger) !important;
+  color: #e06060 !important;
+  background: transparent !important;
+}
+.btn-outline-danger:hover {
+  background: var(--danger) !important;
+  color: #fff !important;
+}
+.btn-warning {
+  background: #9a7020 !important;
+  border-color: #9a7020 !important;
+  color: #fff !important;
+}
+.btn-sm {
+  font-size: 0.62rem;
+  padding: 5px 12px;
+}
+.btn-lg {
+  font-size: 0.78rem;
+  padding: 13px 28px;
+}
+
+/* ── Cards ─────────────────────────────────────────── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border) !important;
+  border-radius: 0 !important;
+  color: var(--text);
+}
+.card-title { color: #e8e4d8; }
+
+/* ── Forms ─────────────────────────────────────────── */
+.form-control, .form-select {
+  background: var(--bg) !important;
+  border-color: var(--border2) !important;
+  color: var(--text) !important;
+  border-radius: 0 !important;
+  font-family: var(--font-body);
+}
+.form-control:focus, .form-select:focus {
+  background: var(--bg) !important;
+  border-color: var(--gold-dim) !important;
+  color: var(--text) !important;
+  box-shadow: 0 0 0 2px rgba(200,164,74,0.15) !important;
+}
+.form-control::placeholder { color: var(--text-dim) !important; }
+.form-label {
+  font-family: var(--font-head);
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gold-dim);
+}
+
+/* ── Tables ────────────────────────────────────────── */
+.table { color: var(--text); }
+.table td, .table th { border-color: var(--border); }
+.table thead th {
+  font-family: var(--font-head);
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gold-dim);
+  font-weight: 400;
+}
+.table-hover tbody tr:hover { background: rgba(200,164,74,0.04); }
+
+/* ── Pagination ────────────────────────────────────── */
+.page-link {
+  background: var(--surface) !important;
+  border-color: var(--border) !important;
+  color: var(--text-dim) !important;
+  font-family: var(--font-head);
+  font-size: 0.7rem;
+  border-radius: 0 !important;
+}
+.page-item.active .page-link {
+  background: var(--gold) !important;
+  border-color: var(--gold) !important;
+  color: var(--bg) !important;
+}
+.page-link:hover { color: var(--gold) !important; }
+
+/* ── Alerts ────────────────────────────────────────── */
+.alert {
+  border-radius: 0;
+  font-family: var(--font-body);
+}
+.alert-danger { background: rgba(192,64,64,0.15); border-color: var(--danger); color: #e08080; }
+.alert-success { background: rgba(29,158,117,0.15); border-color: #1d9e75; color: #5ecfab; }
+.alert-warning { background: rgba(154,112,32,0.15); border-color: #9a7020; color: #e0b060; }
+
+/* ── Badge ─────────────────────────────────────────── */
+.badge {
+  font-family: var(--font-head);
+  font-size: 0.58rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border-radius: 0;
+}
+
+/* ── Utilities ─────────────────────────────────────── */
+.text-primary { color: var(--gold) !important; }
+.text-secondary { color: var(--text-dim) !important; }
+.text-muted { color: #7a7868 !important; }
+.fw-bold { font-family: var(--font-head); }
+.bg-dark { background: var(--surface) !important; }
+code { color: var(--gold-dim); background: rgba(200,164,74,0.08); padding: 1px 5px; }
+
+/* ── Section title ─────────────────────────────────── */
+.section-title {
+  font-family: var(--font-head);
+  color: var(--gold-light);
+  border-left: 3px solid var(--gold);
+  padding-left: 14px;
+  font-weight: 600;
+}
+
+/* ── Price tag ─────────────────────────────────────── */
+.price-tag {
+  color: var(--gold);
+  font-family: var(--font-head);
+  font-weight: 600;
+  font-size: 1.05rem;
+}
+
+/* ── Product card ──────────────────────────────────── */
+.product-card {
+  transition: transform 0.25s, border-color 0.25s !important;
+  cursor: pointer;
+  overflow: hidden;
+}
+.product-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--gold-dim) !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5) !important;
+}
+.product-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(200,164,74,0.08);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.product-card:hover .product-overlay { opacity: 1; }
+.product-overlay .btn { font-size: 0.65rem; letter-spacing: 0.12em; }
+.object-fit-cover { object-fit: cover; }
+
+/* ── Admin sidebar ─────────────────────────────────── */
+.admin-sidebar {
+  background: #0a0b16 !important;
+  border-right: 1px solid var(--border);
+  width: 220px;
+  min-height: 100vh;
+}
+.admin-sidebar .fw-bold {
+  font-family: var(--font-head);
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.admin-sidebar .nav-link {
+  font-size: 0.68rem !important;
+  padding: 8px 10px;
+  border-radius: 0 !important;
+  transition: all 0.15s;
+}
+.admin-sidebar .nav-link:hover {
+  background: rgba(200,164,74,0.08);
+  color: var(--gold) !important;
+}
+
+/* ── Footer ────────────────────────────────────────── */
+footer {
+  background: var(--surface) !important;
+  border-top: 1px solid var(--border);
+  position: relative;
+}
+footer::before {
+  content: '';
+  position: absolute;
+  top: -1px; left: 50%; transform: translateX(-50%);
+  width: 200px; height: 1px;
+  background: linear-gradient(to right, transparent, var(--gold-dim), transparent);
+}
+footer small {
+  font-family: var(--font-head);
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}

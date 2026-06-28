@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Order Detail')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar(0)}"></nav>
+
+<div class="container py-5" style="max-width:720px;">
+
+    <div th:if="${success}" class="alert alert-success mb-4">
+        <i class="bi bi-check-circle me-2"></i>Order placed successfully!
+    </div>
+
+    <div class="d-flex align-items-center gap-3 mb-4">
+        <a href="/orders" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-arrow-left"></i>
+        </a>
+        <h2 class="section-title mb-0">Order #<span th:text="${order.id}"></span></h2>
+    </div>
+
+    <div class="card mb-4 p-3">
+        <div class="d-flex justify-content-between mb-3">
+            <span class="text-secondary">Date</span>
+            <span th:text="${#temporals.format(order.createdAt, 'dd.MM.yyyy HH:mm')}"></span>
+        </div>
+        <div class="d-flex justify-content-between mb-3">
+            <span class="text-secondary">Payment</span>
+            <span th:text="${order.paymentMethod}"></span>
+        </div>
+        <div class="d-flex justify-content-between">
+            <span class="text-secondary">Status</span>
+            <span th:text="${order.status}"></span>
+        </div>
+    </div>
+
+    <div class="card p-3">
+        <h5 class="mb-3 text-secondary">Items</h5>
+        <div th:each="item : ${order.items}"
+             class="d-flex justify-content-between py-2"
+             style="border-bottom:1px solid #2a2a4a;">
+            <div class="d-flex align-items-center gap-3">
+                <img th:if="${item.productImageSnapshot != null}"
+                     th:src="${item.productImageSnapshot}"
+                     style="width:48px;height:36px;object-fit:cover;border-radius:4px;"
+                     alt="product"/>
+                <span th:text="${item.productNameSnapshot} + ' x' + ${item.quantity}"></span>
+            </div>
+            <span class="price-tag"
+                  th:text="'$' + ${#numbers.formatDecimal(item.priceAtPurchase, 1, 2)}"></span>
+        </div>
+        <div class="d-flex justify-content-between pt-3 fw-bold fs-5">
+            <span>Total</span>
+            <span class="price-tag"
+                  th:text="'$' + ${#numbers.formatDecimal(order.totalAmount, 1, 2)}"></span>
+        </div>
+    </div>
+
+</div>
+
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

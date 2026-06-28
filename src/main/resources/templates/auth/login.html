@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Login')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar(0)}"></nav>
+
+<div class="d-flex justify-content-center align-items-center" style="min-height:80vh;">
+    <div class="card p-5" style="width:100%;max-width:420px;">
+        <h3 class="fw-bold mb-1 text-center">Welcome back</h3>
+        <p class="text-secondary text-center mb-4 small">Sign in to your account</p>
+
+        <div th:if="${error}" class="alert alert-danger py-2">
+            Invalid username or password.
+        </div>
+        <div th:if="${param.registered}" class="alert alert-success py-2">
+            Account created! You can now log in.
+        </div>
+
+        <form th:action="@{/auth/login}" method="post">
+            <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+            <div class="mb-3">
+                <label class="form-label text-secondary small">Username</label>
+                <input type="text" name="username" class="form-control" autofocus required/>
+            </div>
+            <div class="mb-4">
+                <label class="form-label text-secondary small">Password</label>
+                <input type="password" name="password" class="form-control" required/>
+            </div>
+            <button type="submit" class="btn btn-primary w-100 py-2">Sign in</button>
+        </form>
+
+        <p class="text-center text-secondary small mt-4 mb-0">
+            Don't have an account?
+            <a href="/auth/register" style="color:var(--gold);">Create one</a>
+        </p>
+    </div>
+</div>
+
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

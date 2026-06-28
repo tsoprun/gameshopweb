@@ -1,0 +1,15 @@
+services:
+  app:
+    build: .
+    container_name: gameshop-app
+    restart: unless-stopped
+    # App slusa na 8080 u containeru; mapiramo ga na localhost hosta.
+    # Nginx (na hostu) ce raditi reverse proxy + HTTPS prema 127.0.0.1:8080.
+    ports:
+      - "127.0.0.1:8080:8080"
+    env_file:
+      - .env
+    # Omogucuje da se iz containera dohvati MSSQL koji radi na HOSTU
+    # preko imena host.docker.internal (vidi DB_URL u .env).
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

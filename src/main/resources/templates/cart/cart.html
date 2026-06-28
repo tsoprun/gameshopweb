@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Cart')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar(${cartCount})}"></nav>
+
+<div class="container py-5">
+    <h2 class="section-title mb-4">Your cart</h2>
+
+    <div th:if="${cartItems.isEmpty()}" class="text-center py-5 text-secondary">
+        <i class="bi bi-cart-x fs-1 d-block mb-3"></i>
+        <p>Your cart is empty.</p>
+        <a href="/shop" class="btn btn-primary">Browse games</a>
+    </div>
+
+    <div th:unless="${cartItems.isEmpty()}">
+        <div class="card mb-4">
+            <div class="table-responsive">
+                <table class="table mb-0 align-middle">
+                    <thead style="border-bottom:1px solid #2a2a4a;">
+                    <tr>
+                        <th>Game</th>
+                        <th class="text-center">Price</th>
+                        <th class="text-center" style="width:130px;">Qty</th>
+                        <th class="text-center">Subtotal</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="item : ${cartItems}">
+                        <td>
+                            <div class="d-flex align-items-center gap-3">
+                                <img th:src="${item.productImage}" th:alt="${item.productName}"
+                                     style="width:60px;height:40px;object-fit:cover;border-radius:6px;"
+                                     onerror="this.src='/images/placeholder.jpg'"/>
+                                <span class="fw-bold" th:text="${item.productName}"></span>
+                            </div>
+                        </td>
+                        <td class="text-center"
+                            th:text="'$' + ${#numbers.formatDecimal(item.price,1,2)}"></td>
+                        <td>
+                            <form th:action="@{/cart/update/{id}(id=${item.productId})}"
+                                  method="post" class="d-flex justify-content-center gap-1">
+                                <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+                                <input type="number" name="quantity" th:value="${item.quantity}"
+                                       min="1" max="99" class="form-control text-center"
+                                       style="width:70px;" onchange="this.form.submit()"/>
+                            </form>
+                        </td>
+                        <td class="text-center price-tag"
+                            th:text="'$' + ${#numbers.formatDecimal(item.subtotal,1,2)}"></td>
+                        <td class="text-center">
+                            <form th:action="@{/cart/remove/{id}(id=${item.productId})}"
+                                  method="post">
+                                <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+                                <button class="btn btn-sm btn-outline-danger">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+            <form action="/cart/clear" method="post">
+                <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+                <button class="btn btn-outline-secondary">
+                    <i class="bi bi-x-circle me-1"></i>Clear cart
+                </button>
+            </form>
+            <div class="d-flex align-items-center gap-4">
+                <span class="fs-5 text-secondary">Total:</span>
+                <span class="price-tag fs-3"
+                      th:text="'$' + ${#numbers.formatDecimal(total,1,2)}"></span>
+                <a href="/checkout" class="btn btn-primary btn-lg">
+                    <i class="bi bi-lock me-2"></i>Checkout
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>
