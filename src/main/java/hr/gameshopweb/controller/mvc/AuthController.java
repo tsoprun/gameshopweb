@@ -1,6 +1,9 @@
 package hr.gameshopweb.controller.mvc;
 
+import hr.gameshopweb.security.CookieAuthService;
 import hr.gameshopweb.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class AuthController {
 
     private final UserService userService;
+    private final CookieAuthService cookieAuthService;
 
     @GetMapping("/login")
     public String loginPage(@RequestParam(required = false)String error, Model model) {
@@ -24,6 +28,13 @@ public class AuthController {
     }
     @GetMapping("/register")
     public String registerPage() { return "auth/register"; }
+
+    /** Refresh: procita refreshToken cookie i izda novi accessToken cookie. */
+    @PostMapping("/refresh-token")
+    public String refreshToken(HttpServletRequest request, HttpServletResponse response) {
+        boolean ok = cookieAuthService.refreshAccessToken(request, response);
+        return ok ? "redirect:/shop" : "redirect:/auth/login?error=true";
+    }
 
     @PostMapping("/register")
     public String register(@RequestParam String username,

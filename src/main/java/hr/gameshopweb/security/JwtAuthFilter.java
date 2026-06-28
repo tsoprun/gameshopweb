@@ -44,6 +44,13 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String header = req.getHeader("Authorization");
         if (StringUtils.hasText(header) && header.startsWith("Bearer "))
             return header.substring(7);
+        // fallback: access token iz httpOnly cookieja (web koristi cookie, ne header)
+        if (req.getCookies() != null) {
+            for (jakarta.servlet.http.Cookie c : req.getCookies()) {
+                if ("accessToken".equals(c.getName()))
+                    return c.getValue();
+            }
+        }
         return null;
     }
 

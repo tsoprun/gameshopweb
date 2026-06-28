@@ -2,6 +2,8 @@ package hr.gameshopweb.config;
 
 import hr.gameshopweb.security.CustomUserDetailsService;
 import hr.gameshopweb.security.JwtAuthFilter;
+import hr.gameshopweb.security.JwtCookieAuthFilter;
+import hr.gameshopweb.security.JwtCookieSuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -19,6 +21,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.context.NullSecurityContextRepository;
 
 @Configuration
 @EnableWebSecurity
@@ -30,6 +33,8 @@ public class SecurityConfig {
 
     private final CustomUserDetailsService userDetailsService;
     private final JwtAuthFilter jwtAuthFilter;
+    private final JwtCookieAuthFilter jwtCookieAuthFilter;
+    private final JwtCookieSuccessHandler jwtCookieSuccessHandler;
 
     // --- REST API chain (stateless, JWT) ---
     @Bean
@@ -57,6 +62,11 @@ public class SecurityConfig {
     public SecurityFilterChain mvcFilterChain(HttpSecurity http) throws Exception {
         http
                 .securityMatcher("/**")
+                // Prijava se NE pamti u sessionu - svaki zahtjev se autentificira
+                // iz JWT cookieja (preko jwtCookieAuthFilter). Tako brisanje tokena
+                // stvarno odjavljuje korisnika. (CSRF i kosarica i dalje koriste session.)
+                .securityContext(sc -> sc.securityContextRepository(
+                        new NullSecurityContextRepository()))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/shop/**", "/cart/**", "/auth/**",
                                 "/css/**", "/js/**", "/images/**").permitAll()
@@ -65,10 +75,12 @@ public class SecurityConfig {
                         .hasAnyRole("KUPAC", ROLE_ADMIN)
                         .anyRequest().authenticated()
                 )
+                .addFilterBefore(jwtCookieAuthFilter,
+                        UsernamePasswordAuthenticationFilter.class)
                 .formLogin(form -> form
                         .loginPage("/auth/login")
                         .loginProcessingUrl("/auth/login")
-                        .defaultSuccessUrl("/shop", true)
+                        .successHandler(jwtCookieSuccessHandler)
                         .failureUrl("/auth/login?error=true")
                         .permitAll()
                 )
@@ -76,7 +88,7 @@ public class SecurityConfig {
                         .logoutUrl("/auth/logout")
                         .logoutSuccessUrl("/shop")
                         .invalidateHttpSession(true)
-                        .deleteCookies("JSESSIONID")
+                        .deleteCookies("JSESSIONID", "accessToken", "refreshToken")
                 )
                 .authenticationProvider(authenticationProvider());
         return http.build();
@@ -88,6 +100,15 @@ public class SecurityConfig {
     public FilterRegistrationBean<JwtAuthFilter> jwtAuthFilterRegistration(
             JwtAuthFilter filter) {
         FilterRegistrationBean<JwtAuthFilter> registration =
+                new FilterRegistrationBean<>(filter);
+        registration.setEnabled(false);
+        return registration;
+    }
+
+    @Bean
+    public FilterRegistrationBean<JwtCookieAuthFilter> jwtCookieAuthFilterRegistration(
+            JwtCookieAuthFilter filter) {
+        FilterRegistrationBean<JwtCookieAuthFilter> registration =
                 new FilterRegistrationBean<>(filter);
         registration.setEnabled(false);
         return registration;
