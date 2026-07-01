@@ -4,6 +4,7 @@ import hr.gameshopweb.security.CustomUserDetailsService;
 import hr.gameshopweb.security.JwtAuthFilter;
 import hr.gameshopweb.security.JwtCookieAuthFilter;
 import hr.gameshopweb.security.JwtCookieSuccessHandler;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -51,6 +52,12 @@ public class SecurityConfig {
                         .requestMatchers("/api/admin/**").hasRole(ROLE_ADMIN)
                         .anyRequest().authenticated()
                 )
+                // REST API vraca cisti 401 umjesto redirecta na HTML login formu.
+                // Koristimo setStatus (a ne sendError) jer sendError okida interni
+                // ERROR dispatch na /error, koji onda preuzme MVC lanac i redirecta
+                // anonimni zahtjev na /auth/login.
+                .exceptionHandling(ex -> ex.authenticationEntryPoint(
+                        (req, res, e) -> res.setStatus(HttpServletResponse.SC_UNAUTHORIZED)))
                 .addFilterBefore(jwtAuthFilter,
                         UsernamePasswordAuthenticationFilter.class);
         return http.build();
