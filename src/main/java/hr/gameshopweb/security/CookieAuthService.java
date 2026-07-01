@@ -14,7 +14,9 @@ import java.time.Duration;
 /**
  * Centralno mjesto za JWT autentikaciju preko httpOnly cookieja (web).
  * Token se NIKAD ne sprema u localStorage (XSS), nego u httpOnly + Secure +
- * SameSite=Strict cookie kojeg JavaScript ne moze procitati.
+ * SameSite=Lax cookie kojeg JavaScript ne moze procitati. Lax (a ne Strict) jer
+ * cookie mora prezivjeti top-level redirect natrag s PayPala; Strict bi ga
+ * odbio na povratku i korisnik bi ispao odjavljen.
  */
 @Service
 @RequiredArgsConstructor
