@@ -14,10 +14,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
+
 @Service
 @RequiredArgsConstructor
-
+@Transactional
 public class OrderService {
 
     private final OrderRepository orderRepository;
@@ -25,7 +28,7 @@ public class OrderService {
     private final CartService cartService;
     private final EmailService emailService;
 
-    @org.springframework.transaction.annotation.Transactional
+
     public Order createOrder(User user, HttpSession session,
                              Order.PaymentMethod paymentMethod,
                              Order.OrderStatus status,

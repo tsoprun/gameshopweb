@@ -71,7 +71,7 @@ public class SecurityConfig {
                 .securityMatcher("/**")
                 // Prijava se NE pamti u sessionu - svaki zahtjev se autentificira
                 // iz JWT cookieja (preko jwtCookieAuthFilter). Tako brisanje tokena
-                // stvarno odjavljuje korisnika. (CSRF i kosarica i dalje koriste session.)
+                // stvarno odjavljuje korisnika
                 .securityContext(sc -> sc.securityContextRepository(
                         new NullSecurityContextRepository()))
                 .authorizeHttpRequests(auth -> auth
