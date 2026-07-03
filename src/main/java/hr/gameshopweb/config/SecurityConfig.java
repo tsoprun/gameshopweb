@@ -53,7 +53,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 // REST API vraca cisti 401 umjesto redirecta na HTML login formu.
-                // Koristimo setStatus (a ne sendError) jer sendError okida interni
+                // Koristi se setStatus (a ne sendError) jer sendError okida interni
                 // ERROR dispatch na /error, koji onda preuzme MVC lanac i redirecta
                 // anonimni zahtjev na /auth/login.
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(
@@ -70,8 +70,7 @@ public class SecurityConfig {
         http
                 .securityMatcher("/**")
                 // Prijava se NE pamti u sessionu - svaki zahtjev se autentificira
-                // iz JWT cookieja (preko jwtCookieAuthFilter). Tako brisanje tokena
-                // stvarno odjavljuje korisnika
+                // iz JWT cookieja (preko jwtCookieAuthFilter).
                 .securityContext(sc -> sc.securityContextRepository(
                         new NullSecurityContextRepository()))
                 .authorizeHttpRequests(auth -> auth
